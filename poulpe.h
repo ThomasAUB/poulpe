@@ -4,13 +4,13 @@
 
 #define DEFINE_LISTENERS(T...)                                                  \
 struct Notifier{                                                                \
-	using poulpe_t = Poulpe<T>;                                                 \
-	template<typename signal_t>                                                 \
-	void sendSignal(signal_t& s){                                               \
-		sP.sendSignal(s);                                                       \
-	}                                                                           \
+	using poulpe_t = Poulpe<T>;                                             \
+	template<typename signal_t>                                             \
+	void sendSignal(signal_t& s){                                           \
+		sP.sendSignal(s);                                               \
+	}                                                                       \
 private :                                                                       \
-	static poulpe_t& sP;                                                        \
+	static poulpe_t& sP;                                                    \
 };                                                                              \
 
 
