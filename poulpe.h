@@ -2,6 +2,30 @@
 
 #include <tuple>
 
+
+#define CREATE_NOTIFIER_ARG(T, signal_t, arg)										\
+struct T##Notifier : public T{													\
+	T##Notifier():T(arg){}														\
+	virtual void sendSignal(signal_t& s) final override {						\
+		mNotif.sendSignal(s);													\
+	}																			\
+private:																		\
+	Notifier mNotif;															\
+};																				\
+T##Notifier																		\
+
+
+#define CREATE_NOTIFIER(T, signal_t)											\
+struct T##Notifier : public T{													\
+	virtual void sendSignal(signal_t& s) final override {						\
+		mNotif.sendSignal(s);													\
+	}																			\
+private:																		\
+	Notifier mNotif;															\
+};																				\
+T##Notifier																		\
+
+
 #define DEFINE_LISTENERS(T...)                                                  \
 struct Notifier{                                                                \
 	using poulpe_t = Poulpe<T>;                                             \
