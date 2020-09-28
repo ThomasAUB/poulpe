@@ -2,7 +2,6 @@
 
 #include <tuple>
 
-
 ////////////////////////////////////////////////////////////////////////////////
 
 template<typename...signal_types>
@@ -13,13 +12,11 @@ typename notifier_t,
 typename T, 
 typename signal_types_t, 
 typename...args_t>
-struct NotifierFactory_M : public T {
+struct NotifierFactory : public T {
 
-	NotifierFactory_M(args_t...a):T(a...){}
+	NotifierFactory(args_t...a):T(a...){}
 
 private:
-
-	template<size_t FT> struct FakeType{};
 	
 	static constexpr size_t kSignalCount = 
 	std::tuple_size<typename signal_types_t::signals>::value;
@@ -28,6 +25,8 @@ private:
 	using sig_t = 
 	typename std::tuple_element<I, typename signal_types_t::signals>::type;
 
+	template<size_t FT> struct FakeType{};
+	
 	template<size_t I>
 	using sigC_t = 
 	typename std::conditional_t<
@@ -47,16 +46,6 @@ private:
 	
 };
 ////////////////////////////////////////////////////////////////////////////////
-
-
-/*
-template<typename notifier_t, typename T, typename signal_t, typename...args_t>
-struct NotifierFactory : public T{
-	NotifierFactory(args_t...a):T(a...){}
-	void sendSignal(signal_t s) final {
-		notifier_t::sP.sendSignal(s);
-	}
-};*/
 
 
 
