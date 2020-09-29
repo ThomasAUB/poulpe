@@ -5,21 +5,17 @@
 
 
 #define DEFINE_LISTENERS(T...)                                                  \
+using poulpe_t = Poulpe<T>;							\
 struct Notifier{                                                                \
-    using poulpe_t = Poulpe<T>;                                                 \
-    template<typename signal_t>                                                 \
-    void sendSignal(signal_t& s){                                               \
-        sP.sendSignal(s);                                                       \
-    }                                                                           \
-    static poulpe_t& sP;                                                        \
-};
+	template<typename signal_t>                                             \
+	void sendSignal(signal_t& s){ sP.sendSignal(s); }                       \
+	static poulpe_t& sP;                                                    \
+};										\
 
 
 #define CREATE_POULPE(p...)                                                     \
-Notifier::poulpe_t gInterDispatcher(p);                                         \
-Notifier::poulpe_t& Notifier::sP = gInterDispatcher;                            \
-
-
+poulpe_t	gPoulpe(p);              		                        \
+poulpe_t&	Notifier::sP = gPoulpe;                   			\
 
 
 ////////////////////////////////////////////////////////////////////////////////
