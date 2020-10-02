@@ -2,17 +2,26 @@
 
 #include "SEQ_signal.h"
 
+#include "OPT.h"
 
-template<typename Notif_t>
-struct SEQ : private Notif_t{
+struct STEP_signal{};
 
-	template<typename T>
-	void receiveSignal(T& t){}
+struct SEQ{
+
+	SEQ(uint8_t i) : mVal(i)
+	{}
+
+	// mandatory receiver function
+	template<typename T> void receiveSignal(T& t) {}
 
 	void Test(){
-		SEQ_signal s(9, 6);
-		this->sendSignal(s);
+		sendSignal(SEQ_signal(9, 6));
 	}
 
+	virtual void sendSignal(const SEQ_signal& s) = 0;
+	virtual void sendSignal(const OPT_signal& s) = 0;
+	virtual void sendSignal(const HUI_signal& s) = 0;
+
+	const uint8_t mVal;
 
 };

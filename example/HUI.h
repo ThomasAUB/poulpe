@@ -4,21 +4,21 @@
 #include "HUI_signal.h"
 #include "SEQ_signal.h"
 
-template<typename Notif_t>
-struct HUI : private Notif_t{
 
-	template<typename T>
-	void receiveSignal(T& t){}
+struct HUI{
+
+	// mandatory receiver function
+	template<typename T> void receiveSignal(T& t) {}
 
 	void Test(){
-		HUI_signal sig("yo");
-		this->sendSignal(sig);
+		sendSignal(HUI_signal("yo"));
 	}
 
-	void receiveSignal(SEQ_signal& s){
+	void receiveSignal(const SEQ_signal& s){
 		std::cout << "seq signal received in HUI" << std::endl;
-		HUI_signal sig("wesh");
-		this->sendSignal(sig);
+		this->sendSignal(HUI_signal("wesh"));
 	}
+
+	virtual void sendSignal(const HUI_signal& s) = 0;
 
 };

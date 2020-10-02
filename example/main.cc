@@ -33,30 +33,44 @@
 #include "HUI.h"
 #include "SEQ.h"
 #include "SCREEN.h"
+#include "OPT.h"
 
 #include "poulpe.h"
 
 
-DEFINE_LISTENERS(GUI, SCREEN, HUI<Notifier>)
+DEFINE_LISTENERS(GUI, SCREEN, HUI, OPT<Notifier>)
+
+// notifier factory instantiation
+NotifierFactory<
+Notifier,
+SEQ,
+SignalTypes<
+	const SEQ_signal&, 
+	const OPT_signal&, 
+	const HUI_signal&>,
+	uint8_t> seq(5);
+
+// notifier factory instantiation
+NotifierFactory<
+Notifier,
+HUI,
+SignalTypes<const HUI_signal&>> hui;
+
+// notifier instantiation
+OPT<Notifier> opt(5, 4, 3);
 
 
 GUI gui; 			// receiver
 SCREEN screen; 		// receiver
-HUI<Notifier> hui;	// receiver / transmitter
-SEQ<Notifier> seq;	// transmitter
 
 
-CREATE_POULPE(gui, screen, hui)
-
-
+CREATE_POULPE(gui, screen, hui, opt)
 
 
 int main(void){
 
 	hui.Test();
 	seq.Test();
-
-	std::cout << "Hello World!" << std::endl;
 
 	return 0;
 }
