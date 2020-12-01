@@ -5,10 +5,10 @@
 
 
 #define DEFINE_LISTENERS(T...)                                                  \
-struct Emitter{                                                                \
+struct Emitter{                                                                	\
 	using poulpe_t = Poulpe<T>;						\
 	template<typename signal_t>                                             \
-	void pEmit(signal_t& s){ sP.pEmit(s); }                       \
+	void pEmit(signal_t& s){ sP.pEmit(s); }                       		\
 	static poulpe_t& sP;                                                    \
 };										\
 
