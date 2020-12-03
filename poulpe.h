@@ -49,17 +49,17 @@ private:
     I < kSignalCount,
     sig_t<I%kSignalCount>, DummyType<I> >;
 	
-#define REPEAT_1	void pEmit(cond_sig_t<__COUNTER__>& s) { emitter_t::sP.pEmit(s); }
-#define REPEAT_2	REPEAT_1	REPEAT_1
-#define REPEAT_4	REPEAT_2	REPEAT_2
-#define REPEAT_8	REPEAT_4	REPEAT_4
-#define REPEAT_16	REPEAT_8	REPEAT_8
-#define REPEAT_32	REPEAT_16	REPEAT_16
-#define REPEAT_64	REPEAT_32	REPEAT_32
-#define REPEAT_128	REPEAT_64	REPEAT_64
+#define P_REPEAT_FUNC_GEN_1	void pEmit(cond_sig_t<__COUNTER__>& s) { emitter_t::sP.pEmit(s); }
+#define P_REPEAT_FUNC_GEN_2	P_REPEAT_FUNC_GEN_1	P_REPEAT_FUNC_GEN_1
+#define P_REPEAT_FUNC_GEN_4	P_REPEAT_FUNC_GEN_2	P_REPEAT_FUNC_GEN_2
+#define P_REPEAT_FUNC_GEN_8	P_REPEAT_FUNC_GEN_4	P_REPEAT_FUNC_GEN_4
+#define P_REPEAT_FUNC_GEN_16	P_REPEAT_FUNC_GEN_8	P_REPEAT_FUNC_GEN_8
+#define P_REPEAT_FUNC_GEN_32	P_REPEAT_FUNC_GEN_16	P_REPEAT_FUNC_GEN_16
+#define P_REPEAT_FUNC_GEN_64	P_REPEAT_FUNC_GEN_32	P_REPEAT_FUNC_GEN_32
+#define P_REPEAT_FUNC_GEN_128	P_REPEAT_FUNC_GEN_64	P_REPEAT_FUNC_GEN_64
 
 // base class interface is allowed for 128 different signals
-REPEAT_128
+P_REPEAT_FUNC_GEN_128
 
 };
 ////////////////////////////////////////////////////////////////////////////////
