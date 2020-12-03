@@ -4,7 +4,7 @@
 #include <tuple>
 
 
-#define DEFINE_LISTENERS(T...)                                                  \
+#define DEFINE_RECEIVERS(T...)                                                  \
 struct Emitter{                                                                	\
 	using poulpe_t = Poulpe<T>;						\
 	template<typename signal_t>                                             \
