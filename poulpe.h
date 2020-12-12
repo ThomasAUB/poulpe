@@ -4,17 +4,17 @@
 #include <tuple>
 
 
-#define DEFINE_RECEIVERS(T...)                                                  \
+#define DEFINE_RECEIVERS(...)                                             		\
 struct Emitter{                                                                	\
-	using poulpe_t = Poulpe<T>;													\
+	using poulpe_t = Poulpe<__VA_ARGS__>;										\
 	template<typename signal_t>                                             	\
 	void pEmit(signal_t& s){ sP.pEmit(s); }                       				\
 	static poulpe_t& sP;                                                    	\
 };																				\
 
 
-#define CREATE_POULPE(p...)                                                     \
-Emitter::poulpe_t	gPoulpe(p);              		                			\
+#define CREATE_POULPE(...)                                                      \
+Emitter::poulpe_t	gPoulpe(__VA_ARGS__);      		                			\
 Emitter::poulpe_t&	Emitter::sP = gPoulpe;                   					\
 
 
