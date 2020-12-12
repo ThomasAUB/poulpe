@@ -4,6 +4,7 @@
 #include <tuple>
 
 
+
 #define DEFINE_RECEIVERS(...)                                                   \
 struct Emitter{                                                                 \
 	using poulpe_t = Poulpe<__VA_ARGS__>;                                   \
@@ -18,6 +19,68 @@ Emitter::poulpe_t	gPoulpe(__VA_ARGS__);                                   \
 Emitter::poulpe_t&	Emitter::sP = gPoulpe;                                  \
 
 
+
+
+
+
+
+
+
+template<typename...T>
+struct Poulpe{
+
+    constexpr Poulpe(T&...p) :
+    mReceivers(std::tuple<T&...>(p...))
+    {}
+
+    template<typename signal_t>
+    void pEmit(signal_t& s){
+        static_assert(!std::is_fundamental<signal_t>::value,
+            "Invalid signal type : can't be fundamental type");
+        process_caller(s);
+    }
+
+private:
+
+    using receivers_t = std::tuple<T&...>;
+
+    static constexpr size_t kListSize = std::tuple_size<receivers_t>::value;
+
+    const receivers_t mReceivers;
+
+    template <size_t I = 0, typename signal_t>
+    typename std::enable_if<I == kListSize, void>::type
+    process_caller(signal_t& s){ static_cast<void>(s); }
+
+    template <size_t I = 0, typename signal_t>
+    typename std::enable_if<(I < kListSize), void>::type
+    process_caller(signal_t& s){
+        std::get<I>(mReceivers).pReceive(s);
+        process_caller<I+1>(s);
+    }
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Emitter factory : can be used for non-template emitters
 ////////////////////////////////////////////////////////////////////////////////
 
 template<typename...signal_types>
@@ -63,48 +126,8 @@ private:
 P_REPEAT_FUNC_GEN_128
 
 };
+
 ////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-template<typename...T>
-struct Poulpe{
-
-    constexpr Poulpe(T&...p) :
-    mReceivers(std::tuple<T&...>(p...))
-    {}
-
-    template<typename signal_t>
-    void pEmit(signal_t& s){
-        static_assert(!std::is_fundamental<signal_t>::value,
-            "Invalid signal type : can't be fundamental type");        
-        process_caller(s);
-    }
-
-private:
-
-    using receivers_t = std::tuple<T&...>;
-
-    static constexpr size_t kListSize = std::tuple_size<receivers_t>::value;
-
-    const receivers_t mReceivers;
-
-    template <size_t I = 0, typename signal_t>
-    typename std::enable_if<I == kListSize, void>::type
-    process_caller(signal_t& s){ static_cast<void>(s); }
-
-    template <size_t I = 0, typename signal_t>
-    typename std::enable_if<(I < kListSize), void>::type
-    process_caller(signal_t& s){
-        std::get<I>(mReceivers).pReceive(s);
-        process_caller<I+1>(s);
-    }
-
-};
-
 
 
 
