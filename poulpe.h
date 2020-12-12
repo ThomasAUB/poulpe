@@ -4,18 +4,18 @@
 #include <tuple>
 
 
-#define DEFINE_RECEIVERS(...)                                             		\
-struct Emitter{                                                                	\
+#define DEFINE_RECEIVERS(...)													\
+struct Emitter{																	\
 	using poulpe_t = Poulpe<__VA_ARGS__>;										\
-	template<typename signal_t>                                             	\
-	void pEmit(signal_t& s){ sP.pEmit(s); }                       				\
-	static poulpe_t& sP;                                                    	\
+	template<typename signal_t>													\
+	void pEmit(signal_t& s){ sP.pEmit(s); }										\
+	static poulpe_t& sP;														\
 };																				\
 
 
-#define CREATE_POULPE(...)                                                      \
-Emitter::poulpe_t	gPoulpe(__VA_ARGS__);      		                			\
-Emitter::poulpe_t&	Emitter::sP = gPoulpe;                   					\
+#define CREATE_POULPE(...)														\
+Emitter::poulpe_t	gPoulpe(__VA_ARGS__);										\
+Emitter::poulpe_t&	Emitter::sP = gPoulpe;										\
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,10 +51,10 @@ private:
     sig_t<I%kSignalCount>, DummyType<I> >;
 	
 #define P_REPEAT_FUNC_GEN_1		void pEmit(cond_sig_t<__COUNTER__>& s) { emitter_t::sP.pEmit(s); }
-#define P_REPEAT_FUNC_GEN_2		P_REPEAT_FUNC_GEN_1		P_REPEAT_FUNC_GEN_1
-#define P_REPEAT_FUNC_GEN_4		P_REPEAT_FUNC_GEN_2		P_REPEAT_FUNC_GEN_2
-#define P_REPEAT_FUNC_GEN_8		P_REPEAT_FUNC_GEN_4		P_REPEAT_FUNC_GEN_4
-#define P_REPEAT_FUNC_GEN_16	P_REPEAT_FUNC_GEN_8		P_REPEAT_FUNC_GEN_8
+#define P_REPEAT_FUNC_GEN_2		P_REPEAT_FUNC_GEN_1	P_REPEAT_FUNC_GEN_1
+#define P_REPEAT_FUNC_GEN_4		P_REPEAT_FUNC_GEN_2	P_REPEAT_FUNC_GEN_2
+#define P_REPEAT_FUNC_GEN_8		P_REPEAT_FUNC_GEN_4	P_REPEAT_FUNC_GEN_4
+#define P_REPEAT_FUNC_GEN_16	P_REPEAT_FUNC_GEN_8	P_REPEAT_FUNC_GEN_8
 #define P_REPEAT_FUNC_GEN_32	P_REPEAT_FUNC_GEN_16	P_REPEAT_FUNC_GEN_16
 #define P_REPEAT_FUNC_GEN_64	P_REPEAT_FUNC_GEN_32	P_REPEAT_FUNC_GEN_32
 #define P_REPEAT_FUNC_GEN_128	P_REPEAT_FUNC_GEN_64	P_REPEAT_FUNC_GEN_64
