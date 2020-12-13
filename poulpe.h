@@ -13,18 +13,9 @@ struct Emitter{                                                                 
 	static poulpe_t& sP;                                                    \
 };                                                                              \
 
-
 #define CREATE_POULPE(...)                                                      \
 Emitter::poulpe_t	gPoulpe(__VA_ARGS__);                                   \
 Emitter::poulpe_t&	Emitter::sP = gPoulpe;                                  \
-
-
-
-
-
-
-
-
 
 template<typename...T>
 struct Poulpe{
@@ -35,6 +26,7 @@ struct Poulpe{
 
     template<typename signal_t>
     void pEmit(signal_t& s){
+
         static_assert(!std::is_fundamental<signal_t>::value,
             "Invalid signal type : can't be fundamental type");
         process_caller(s);
