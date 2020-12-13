@@ -47,7 +47,7 @@ private:
 
     template <size_t I = 0, typename signal_t>
     typename std::enable_if<I == kListSize, void>::type
-    process_caller(signal_t& s){ static_cast<void>(s); }
+    process_caller(signal_t&){}
 
     template <size_t I = 0, typename signal_t>
     typename std::enable_if<(I < kListSize), void>::type
