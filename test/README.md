@@ -1,4 +1,4 @@
-# Unit Testing for uCoSM
+# Unit Testing for Poulpe
 
 ## Dependencies
 
