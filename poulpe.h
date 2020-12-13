@@ -17,6 +17,10 @@ struct Emitter{                                                                 
 Emitter::poulpe_t	gPoulpe(__VA_ARGS__);                                   \
 Emitter::poulpe_t&	Emitter::sP = gPoulpe;                                  \
 
+
+
+
+
 template<typename...T>
 struct Poulpe{
 
