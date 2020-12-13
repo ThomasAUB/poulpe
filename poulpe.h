@@ -33,6 +33,7 @@ struct Poulpe{
 
         static_assert(!std::is_fundamental<signal_t>::value,
             "Invalid signal type : can't be fundamental type");
+
         process_caller(s);
     }
 
@@ -81,6 +82,10 @@ private:
 template<typename...signal_types>
 struct SignalTypes{ using signals = std::tuple<signal_types...>; };
 
+// emitter_t : Emitter
+// T : The interface's type
+// signal_types_t : SignalTypes<>
+// args_t : the types of the interface's constructor if any
 
 template<
 typename emitter_t,
@@ -108,7 +113,7 @@ private:
     I < kSignalCount,
     sig_t<I%kSignalCount>, DummyType<I> >::type;
 
-
+// generates iterface's virtual functions
 #define P_REPEAT_FUNC_GEN_1      void pEmit(cond_sig_t<__COUNTER__>& s) { emitter_t::sP.pEmit(s); }
 #define P_REPEAT_FUNC_GEN_2      P_REPEAT_FUNC_GEN_1     P_REPEAT_FUNC_GEN_1
 #define P_REPEAT_FUNC_GEN_4      P_REPEAT_FUNC_GEN_2     P_REPEAT_FUNC_GEN_2
