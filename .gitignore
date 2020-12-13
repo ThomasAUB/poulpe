@@ -2,3 +2,9 @@
 .buildconfig
 
 *.h~
+
+*.dblite
+
+*.o
+
+build
