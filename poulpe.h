@@ -75,7 +75,6 @@ private:
 
 
 
-
 // Emitter factory : can be used for non-template emitters
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -105,10 +104,11 @@ private:
 	
     template<size_t I>
     using cond_sig_t =
-    typename std::conditional_t<
+    typename std::conditional<
     I < kSignalCount,
-    sig_t<I%kSignalCount>, DummyType<I> >;
-	
+    sig_t<I%kSignalCount>, DummyType<I> >::type;
+
+
 #define P_REPEAT_FUNC_GEN_1      void pEmit(cond_sig_t<__COUNTER__>& s) { emitter_t::sP.pEmit(s); }
 #define P_REPEAT_FUNC_GEN_2      P_REPEAT_FUNC_GEN_1     P_REPEAT_FUNC_GEN_1
 #define P_REPEAT_FUNC_GEN_4      P_REPEAT_FUNC_GEN_2     P_REPEAT_FUNC_GEN_2
