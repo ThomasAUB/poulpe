@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "../poulpe.h"
+#include "../include/poulpe/poulpe.h"
 
 struct PingSignal{
     PingSignal(bool& _r):r(_r){}
