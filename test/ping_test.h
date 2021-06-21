@@ -6,6 +6,7 @@
 
 #include "poulpe_instance.h"
 
+bool PingReceiver::sRX = false;
 
 class PingTest : public CppUnit::TestFixture { 
     
@@ -22,17 +23,49 @@ class PingTest : public CppUnit::TestFixture {
     protected: 
 
         void run(){
-            bool ping = false;
-            TX<Emitter> tx(ping);
-            CPPUNIT_ASSERT(ping);
+            TX<Emitter> tx;
         }
         
 
         template<typename emitter_t>
         struct TX {
-            TX(bool& r){
-                PingSignal s(r);
-                emitter_t::pEmit(s);
+
+            TX(){
+
+                bool ping = false;
+
+                PingReceiver::sRX = false;
+
+                PingSignal<eTestSigType::eRef> s1(ping);
+                emitter_t::pEmit(s1);
+
+                CPPUNIT_ASSERT(ping);
+                CPPUNIT_ASSERT(PingReceiver::sRX);
+
+                PingReceiver::sRX = false;
+
+                const PingSignal<eTestSigType::eConstRef> s2(ping);
+                emitter_t::pEmit(s2);
+
+                CPPUNIT_ASSERT(ping);
+                CPPUNIT_ASSERT(PingReceiver::sRX);
+
+                PingReceiver::sRX = false;
+
+                PingSignal<eTestSigType::eCopy> s3(ping);
+                emitter_t::pEmit(s3);
+
+                CPPUNIT_ASSERT(ping);
+                CPPUNIT_ASSERT(PingReceiver::sRX);
+
+                PingReceiver::sRX = false;
+
+                const PingSignal<eTestSigType::eConstCopy> s4(ping);
+                emitter_t::pEmit(s4);
+
+                CPPUNIT_ASSERT(ping);
+                CPPUNIT_ASSERT(PingReceiver::sRX);
+
             }
         };
         
