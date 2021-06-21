@@ -26,13 +26,13 @@
 
 #include <tuple>
 #include <type_traits>
-
+    
 
 
 
 // pass the typenames of receivers
 #define DEFINE_RECEIVERS(...)                                                       \
-struct Emitter{                                                                     \
+struct Emitter {                                                                    \
 	using poulpe_t = Poulpe<__VA_ARGS__>;                                           \
 	template<typename signal_t>                                                     \
 	static void pEmit(signal_t& s){ sP.pEmit(s); }                                  \
