@@ -44,8 +44,7 @@ class PingTest : public CppUnit::TestFixture {
 
                 PingReceiver::sRX = false;
 
-                const PingSignal<eTestSigType::eConstRef> s2(ping);
-                emitter_t::pEmit(s2);
+                emitter_t::template pEmit<const PingSignal<eTestSigType::eConstRef>&>(PingSignal<eTestSigType::eConstRef>(ping));
 
                 CPPUNIT_ASSERT(ping);
                 CPPUNIT_ASSERT(PingReceiver::sRX);
@@ -60,8 +59,7 @@ class PingTest : public CppUnit::TestFixture {
 
                 PingReceiver::sRX = false;
 
-                const PingSignal<eTestSigType::eConstCopy> s4(ping);
-                emitter_t::pEmit(s4);
+                emitter_t::template pEmit<const PingSignal<eTestSigType::eConstCopy>>(PingSignal<eTestSigType::eConstCopy>(ping));
 
                 CPPUNIT_ASSERT(ping);
                 CPPUNIT_ASSERT(PingReceiver::sRX);
