@@ -17,8 +17,7 @@
 #include "ping_test.h"
 CPPUNIT_TEST_SUITE_REGISTRATION( PingTest );
 
-#include "emitter_factory_test.h"
-CPPUNIT_TEST_SUITE_REGISTRATION( EmitterFactoryTest );
+
 
 int main(){
     // informs test-listener about testresults
