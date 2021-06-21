@@ -10,7 +10,7 @@
 
   It allows to statically define receivers by implementing a **pReceive** function.
 
-## How
+## How-To
 
   In order to make a class able to receive a signal of type **MySignal**, it has to implement the function ***void pReceive(MySignal);***
 
