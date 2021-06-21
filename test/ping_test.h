@@ -29,10 +29,10 @@ class PingTest : public CppUnit::TestFixture {
         
 
         template<typename emitter_t>
-        struct TX : private emitter_t{
+        struct TX {
             TX(bool& r){
                 PingSignal s(r);
-                this->pEmit(s);
+                emitter_t::pEmit(s);
             }
         };
         
