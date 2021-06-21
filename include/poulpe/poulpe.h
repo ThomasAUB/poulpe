@@ -31,22 +31,21 @@
 
 
 // pass the typenames of receivers
-#define DEFINE_RECEIVERS(...)                                               \
-struct Emitter{                                                             \
-	using poulpe_t = Poulpe<__VA_ARGS__>;                                   \
-	template<typename signal_t>                                             \
-	static void pEmit(signal_t& s){ sP.pEmit(s); }                          \
-	static poulpe_t& sP;                                                    \
-};                                                                          \
-
+#define DEFINE_RECEIVERS(...)                                                       \
+struct Emitter{                                                                     \
+	using poulpe_t = Poulpe<__VA_ARGS__>;                                           \
+	template<typename signal_t>                                                     \
+	static void pEmit(signal_t& s){ sP.pEmit(s); }                                  \
+	static poulpe_t& sP;                                                            \
+};                                                                                  \
 
 
 
 
 // pass the instances of the receivers
-#define CREATE_POULPE(...)                                                  \
-Emitter::poulpe_t	gPoulpe(__VA_ARGS__);                                   \
-Emitter::poulpe_t&	Emitter::sP = gPoulpe;                                  \
+#define CREATE_POULPE(...)                                                          \
+Emitter::poulpe_t	gPoulpe(__VA_ARGS__);                                           \
+Emitter::poulpe_t&	Emitter::sP = gPoulpe;                                          \
 
 
 
