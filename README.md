@@ -27,10 +27,10 @@ struct MyReceiver{
 // there is no limitation on the number of receivers
 DEFINE_RECEIVERS(MyReceiver)
 
-// instancation of the receiver
+// instantiation of the receiver
 MyReceiver sRX;
 
-// instanciation of poulpe, 
+// instantiation of poulpe, 
 // it has to be listed in the same order as in DEFINE_RECEIVERS
 CREATE_POULPE(sRX)
 ```
@@ -41,7 +41,7 @@ After the lines above, a type **Emitter** is declared, it is used to send the si
 template<typename emitter_t>
 struct MyEmitter{
     void test(){
-        // instanciation of the signal
+        // instantiation of the signal
         MySignal s;
         // signal send
         emitter_t::pEmit(s);
@@ -49,7 +49,7 @@ struct MyEmitter{
 };
 
 int main(){
-  // instanciation of the emitter
+  // instantiation of the emitter
   MyEmitter<Emitter> e;
   e.test();
   return 0;
