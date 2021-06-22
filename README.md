@@ -8,7 +8,7 @@
 
   Poulpe is a compile-time observer design pattern.
 
-  It allows to statically define receivers by implementing a **pReceive** function.
+  It allows to send data and events from one class to another without other coupling than the signal type.
 
 ## How-To
 
