@@ -30,22 +30,24 @@
 
 
 
-// pass the typenames of receivers
-#define DEFINE_RECEIVERS(...)                                                       	\
-struct Emitter {                                                                    	\
-	using poulpe_t = Poulpe<__VA_ARGS__>;                              		\
-	template<typename signal_t>                                                 	\
-	static void pEmit(signal_t& s){ sP.pEmit(s); }                              	\
-	static poulpe_t& sP;                                                        	\
-};                                                                                  	\
+//! pass the typenames of receivers
+#define DEFINE_RECEIVERS(...)                                                       \
+struct Emitter {                                                                    \
+    using poulpe_t = Poulpe<__VA_ARGS__>;                                           \
+    template<typename signal_t>                                                     \
+    static void pEmit(signal_t& s){ sP.pEmit(s); }                                  \
+    static poulpe_t& sP;                                                            \
+};                                                                                  \
 
 
 
 
-// pass the instances of the receivers
-#define CREATE_POULPE(...)                                                          	\
-Emitter::poulpe_t	gPoulpe(__VA_ARGS__);                                       	\
-Emitter::poulpe_t&	Emitter::sP = gPoulpe;                                      	\
+//! pass the instances of the receivers
+#define CREATE_POULPE(...)                                                          \
+Emitter::poulpe_t	gPoulpe(__VA_ARGS__);                                           \
+Emitter::poulpe_t&	Emitter::sP = gPoulpe;                                          \
+
+
 
 
 
@@ -80,11 +82,12 @@ private:
 
     const receivers_t mReceivers;
 
-    // Primary template with a static assertion
-    // for a meaningful error message
-    // if it ever gets instantiated.
-    // We could leave it undefined if we didn't care.
+    // === receiver sensor === //
 
+    //! Primary template with a static assertion
+    //! for a meaningful error message
+    //! if it ever gets instantiated.
+    //! We could leave it undefined if we didn't care.
     template<typename, typename R>
     struct IsReceiver {
         static_assert(
@@ -92,13 +95,12 @@ private:
             "Second template parameter needs to be of function type.");
     };
 
-    // specialization that does the checking
-
+    //! specialization that does the checking
     template<typename C, typename Ret, typename... Args>
     struct IsReceiver<C, Ret(Args...)> {
     private:
         template<typename R>
-        static constexpr auto check(T*)
+        static constexpr auto check(R*)
         -> typename
             std::is_same<
                 decltype( std::declval<R>().pReceive( std::declval<Args>()... ) ),
@@ -114,12 +116,14 @@ private:
         static constexpr bool value = type::value;
     };
 
-    // last call
+    // ======================= //
+
+    //! last call
     template<size_t I = 0, typename signal_t>
     typename std::enable_if<I == kListSize, void>::type
     process_caller(signal_t&) {}
 
-    // real receiver caller
+    //! real receiver caller
     template<size_t I = 0, typename signal_t>
     typename std::enable_if<
         (I < kListSize) &&
@@ -130,7 +134,7 @@ private:
         process_caller<I + 1>(s);
     }
 
-    // receiver not found
+    //! receiver not found
     template<size_t I = 0, typename signal_t>
     typename std::enable_if<
         (I < kListSize) &&
@@ -141,6 +145,3 @@ private:
     }
 
 };
-
-
-
