@@ -85,10 +85,10 @@ private:
     // if it ever gets instantiated.
     // We could leave it undefined if we didn't care.
 
-    template<typename, typename T>
+    template<typename, typename R>
     struct IsReceiver {
         static_assert(
-            std::integral_constant<T, false>::value,
+            std::integral_constant<R, false>::value,
             "Second template parameter needs to be of function type.");
     };
 
@@ -97,11 +97,11 @@ private:
     template<typename C, typename Ret, typename... Args>
     struct IsReceiver<C, Ret(Args...)> {
     private:
-        template<typename T>
+        template<typename R>
         static constexpr auto check(T*)
         -> typename
             std::is_same<
-                decltype( std::declval<T>().pReceive( std::declval<Args>()... ) ),
+                decltype( std::declval<R>().pReceive( std::declval<Args>()... ) ),
                 Ret    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
             >::type;  // attempt to call it and see if the return type is correct
 
