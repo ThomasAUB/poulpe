@@ -2,7 +2,7 @@
 import os
 
 ############################################################################################""
-commonflags = ['-std=c++17']
+commonflags = ['-std=gnu++17']
 
 debugcflags = commonflags + [] #['-W1', '-GX', '-EHsc', '-D_DEBUG', '/MDd']   #extra compile flags for debug
 releasecflags = commonflags + [] #['-O2', '-EHsc', '-DNDEBUG', '/MD']         #extra compile flags for release
