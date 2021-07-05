@@ -67,8 +67,7 @@ struct Poulpe {
 
         static_assert(!std::is_fundamental<signal_t>::value,
                 "Invalid signal type : can't be fundamental type");
-
-        process_caller(s);
+        process_call(s, std::make_index_sequence<sizeof...(T)>{});
     }
 
 private:
@@ -118,30 +117,27 @@ private:
 
     // ======================= //
 
-    //! last call
-    template<size_t I = 0, typename signal_t>
-    typename std::enable_if<I == kListSize, void>::type
-    process_caller(signal_t&) {}
-
-    //! real receiver caller
-    template<size_t I = 0, typename signal_t>
-    typename std::enable_if<
-        (I < kListSize) &&
-        IsReceiver<type_at<(I%sizeof...(T))>, void(signal_t&)>::value,
-        void>::type
-    process_caller(signal_t &s) {
+    //! call receiver I
+    template<std::size_t I, typename signal_t>
+    inline typename std::enable_if<
+    IsReceiver<type_at<(I%sizeof...(T))>, void(signal_t&)>::value,
+    void>::type
+    call_receiver(signal_t &s) {
         std::get<I>(mReceivers).pReceive(s);
-        process_caller<I + 1>(s);
     }
 
-    //! receiver not found
-    template<size_t I = 0, typename signal_t>
-    typename std::enable_if<
-        (I < kListSize) &&
-        !IsReceiver<type_at<(I%sizeof...(T))>, void(signal_t&)>::value,
-        void>::type
-    process_caller(signal_t &s) {
-        process_caller<I + 1>(s);
+    //! empty receiver : do nothing
+    template<std::size_t I, typename signal_t>
+    inline typename std::enable_if<
+    !IsReceiver<type_at<(I%sizeof...(T))>, void(signal_t&)>::value,
+    void>::type
+    call_receiver(signal_t &s) {}
+
+    //! call every receivers
+    template<typename signal_t, std::size_t... Is>
+    inline void process_call(signal_t &s, std::index_sequence<Is...>) {
+        (call_receiver<Is>(s), ...);
     }
+
 
 };
