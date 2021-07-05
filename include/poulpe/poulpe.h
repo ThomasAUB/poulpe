@@ -136,7 +136,7 @@ private:
     //! call every receivers
     template<typename signal_t, std::size_t... Is>
     inline void process_call(signal_t &s, std::index_sequence<Is...>) {
-        (call_receiver<Is>(s), ...);
+        ((call_receiver<Is>(s)),...);
     }
 
 
