@@ -9,6 +9,6 @@ addons:
     packages:
       - libcppunit-dev
       - scons
-      - libstdc++-7-dev
+      - libstdc++
 
 script: scons test
