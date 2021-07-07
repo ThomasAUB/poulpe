@@ -1,6 +1,7 @@
 language: cpp
 compiler: gcc
 os: linux
+dist: focal
 
 
 
@@ -10,4 +11,5 @@ addons:
       - libcppunit-dev
       - scons
 
-script: scons test
+script: 
+  - scons test
