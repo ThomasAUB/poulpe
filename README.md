@@ -55,9 +55,9 @@ int main(){
   return 0;
 }
 ```
-**A class can be an emitter and a receiver at the same time.**
-**A class can emit an unlimited number of signals to an unlimited number of receivers.**
-**A class can receive an unlimited number of signals from an unlimited number of emitters.**
+** - A class can be an emitter and a receiver at the same time.**
+** - A class can emit an unlimited number of signals to an unlimited number of receivers.**
+** - A class can receive an unlimited number of signals from an unlimited number of emitters.**
 
 The signals are sent by reference which means that if they are received as non const reference, the receivers are able to modify the signals on the fly.
 
