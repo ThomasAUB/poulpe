@@ -16,28 +16,33 @@ struct PingSignal{
     bool& r;
 };
 
+template<eTestSigType I>
+struct RX_var {
+    static bool value;
+};
+
+template<eTestSigType I>
+bool RX_var<I>::value = false;
 
 struct PingReceiver{
 
     void pReceive(PingSignal<eTestSigType::eRef>& s){
         s.r = true;
-        sRX = true;
-    }
-
-    void pReceive(const PingSignal<eTestSigType::eConstRef>& s){
-        sRX = true;
+        RX_var<eTestSigType::eRef>::value = true;
     }
 
     void pReceive(PingSignal<eTestSigType::eCopy> s){
         s.r = true;
-        sRX = true;
+        RX_var<eTestSigType::eConstRef>::value = true;
     }
 
+    void pReceive(const PingSignal<eTestSigType::eConstRef>& s){
+        RX_var<eTestSigType::eConstRef>::value = true;
+    }
+    
     void pReceive(const PingSignal<eTestSigType::eConstCopy> s){
-        sRX = true;
+        RX_var<eTestSigType::eConstCopy>::value = true;
     }
-
-    static bool sRX;
 
 };
 
