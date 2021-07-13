@@ -62,9 +62,9 @@ class PingTest : public CppUnit::TestFixture {
                 // check states
                 CPPUNIT_ASSERT(ping == inPingState);
 
-                CPPUNIT_ASSERT((val == eTestSigType::eRef       && RX_var<val>::value) || !RX_var<val>::value);
+                CPPUNIT_ASSERT((val == eTestSigType::eRef       && RX_var<eTestSigType::eRef>::value) || !RX_var<val>::value);
 
-                CPPUNIT_ASSERT((val == eTestSigType::eCopy      && RX_var<val>::value) || !RX_var<val>::value);
+                CPPUNIT_ASSERT((val == eTestSigType::eCopy      && RX_var<eTestSigType::eRef>::value) || !RX_var<val>::value);
 
                 CPPUNIT_ASSERT((val == eTestSigType::eConstRef  && RX_var<val>::value) || !RX_var<val>::value);
 
@@ -72,5 +72,5 @@ class PingTest : public CppUnit::TestFixture {
             }
 
         };
-        
+
 };
