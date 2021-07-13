@@ -23,14 +23,14 @@ struct MyReceiver{
   Then add the receiver to the Poulpe declaration :
 
 ```cpp
-// list of receivers,
+// list of receiver's types,
 // there is no limitation on the number of receivers
 DEFINE_RECEIVERS(MyReceiver)
 
 // instantiation of the receiver
 MyReceiver sRX;
 
-// instantiation of poulpe, 
+// list of receiver's instances,
 // it has to be listed in the same order as in DEFINE_RECEIVERS
 CREATE_POULPE(sRX)
 ```
@@ -58,7 +58,6 @@ int main(){
 - A class can be an emitter and a receiver at the same time.
 - A class can emit an unlimited number of signals to an unlimited number of receivers.
 - A class can receive an unlimited number of signals from an unlimited number of emitters.
-
-
-The signals are sent by reference which means that if they are received as non const reference, the receivers are able to modify the signals on the fly.
+- Signals are passed by reference wich means that they can be modified on the fly if received as non const reference.
+- A signal emitted as const cannot be received as non const reference.
 
