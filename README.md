@@ -8,7 +8,7 @@
 
   Poulpe is a lightweight compile-time observer design pattern (c++17 or above).
 
-  It allows to send and receive data and events from one class others without other coupling than the signal type.
+  It allows to send and receive data and events (called signals) from one class others without other coupling than the signal type.
 
 ## How-To
 
@@ -17,7 +17,7 @@
 ```cpp
 struct MyReceiver{
     void pReceive(MySignal s);
-}
+};
 ```
 
   Then add the receiver to the Poulpe declaration :
