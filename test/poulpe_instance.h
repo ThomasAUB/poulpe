@@ -33,7 +33,7 @@ struct PingReceiver{
 
     void pReceive(PingSignal<eTestSigType::eCopy> s){
         s.r = true;
-        RX_var<eTestSigType::eConstRef>::value = true;
+        RX_var<eTestSigType::eCopy>::value = true;
     }
 
     void pReceive(const PingSignal<eTestSigType::eConstRef>& s){
