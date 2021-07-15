@@ -6,8 +6,6 @@
 
 #include "poulpe_instance.h"
 
-bool PingReceiver::sRX = false;
-
 class PingTest : public CppUnit::TestFixture { 
     
     CPPUNIT_TEST_SUITE(PingTest);
@@ -30,41 +28,36 @@ class PingTest : public CppUnit::TestFixture {
         template<typename emitter_t>
         struct TX {
 
+            void init() {
+            // initialize receive states
+            RX_var<eTestSigType::eRef>::value = false;
+            RX_var<eTestSigType::eCopy>::value = false;
+            RX_var<eTestSigType::eConstRef>::value = false;
+            RX_var<eTestSigType::eConstCopy>::value = false;
+            }
+
+            template<typename signal_t, eTestSigType t>
+            void checkSignal(bool inPingState) {
+                init();
+                bool ping = false;
+                signal_t s(ping);
+                emitter_t::pEmit(s);
+                CPPUNIT_ASSERT(RX_var<t>::value);
+                CPPUNIT_ASSERT(ping == inPingState);
+            }
+
             TX(){
 
-                bool ping = false;
+                checkSignal<PingSignal<eTestSigType::eRef>, eTestSigType::eRef>(true);
+                checkSignal<PingSignal<eTestSigType::eCopy>, eTestSigType::eCopy>(true);
 
-                PingReceiver::sRX = false;
+                checkSignal<PingSignal<eTestSigType::eConstRef>, eTestSigType::eConstRef>(false);
+                checkSignal<PingSignal<eTestSigType::eConstCopy>, eTestSigType::eConstCopy>(false);
 
-                PingSignal<eTestSigType::eRef> s1(ping);
-                emitter_t::pEmit(s1);
-
-                CPPUNIT_ASSERT(ping);
-                CPPUNIT_ASSERT(PingReceiver::sRX);
-
-                PingReceiver::sRX = false;
-
-                emitter_t::template pEmit<const PingSignal<eTestSigType::eConstRef>&>(PingSignal<eTestSigType::eConstRef>(ping));
-
-                CPPUNIT_ASSERT(ping);
-                CPPUNIT_ASSERT(PingReceiver::sRX);
-
-                PingReceiver::sRX = false;
-
-                PingSignal<eTestSigType::eCopy> s3(ping);
-                emitter_t::pEmit(s3);
-
-                CPPUNIT_ASSERT(ping);
-                CPPUNIT_ASSERT(PingReceiver::sRX);
-
-                PingReceiver::sRX = false;
-
-                emitter_t::template pEmit<const PingSignal<eTestSigType::eConstCopy>>(PingSignal<eTestSigType::eConstCopy>(ping));
-
-                CPPUNIT_ASSERT(ping);
-                CPPUNIT_ASSERT(PingReceiver::sRX);
-
+                checkSignal<const PingSignal<eTestSigType::eConstRef>, eTestSigType::eConstRef>(false);
+                checkSignal<const PingSignal<eTestSigType::eConstCopy>, eTestSigType::eConstCopy>(false);
             }
+
         };
-        
+
 };
