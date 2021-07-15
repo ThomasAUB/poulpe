@@ -72,14 +72,10 @@ struct Poulpe {
 
 private:
 
-    using receivers_t = std::tuple<T&...>;
-
     template<size_t I>
     using type_at = typename std::tuple_element<I, std::tuple<T...>>::type;
 
-    static constexpr size_t kListSize = std::tuple_size<receivers_t>::value;
-
-    const receivers_t mReceivers;
+    const std::tuple<T&...> mReceivers;
 
     // === receiver sensor === //
 
