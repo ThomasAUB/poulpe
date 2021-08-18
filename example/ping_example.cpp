@@ -2,28 +2,36 @@
 
 #include "poulpe.h"
 
+// signal definition
 struct PingSignal{
-    PingSignal(bool& _r):r(_r){}
+    PingSignal(bool& _r):
+    r(_r){}
     bool& r;
 };
 
 
 
 template<typename emitter_t>
-struct TX {
-    TX(bool& r){
+struct PingEmitter {
+
+    PingEmitter(bool& r){
+
+        // instantiate signal
         PingSignal s(r);
+
+        // emit signal
         emitter_t::pEmit(s);
     }
+
 };
 
 
 
 struct PingReceiver{
 
-    template<typename void_sig> void pReceive(void_sig){}
-
+    // receive signal
     void pReceive(PingSignal& s){
+        // update ping state
         s.r = true;
     }
 
@@ -31,18 +39,20 @@ struct PingReceiver{
 
 DEFINE_RECEIVERS(PingReceiver)
 
-PingReceiver ping_rx;
+PingReceiver rx;
 
-CREATE_POULPE(ping_rx)
-
+CREATE_POULPE(rx)
 
 
 int main() {
 
+    // instantiate ping state
 	bool ping = false;
 
-	TX<Emitter> tx(ping);
+    // instantiate ping emitter
+	PingEmitter<Emitter> tx(ping);
 
+    // test updated ping state
 	if(ping){
 		std::cout << "Ping OK" << std::endl;
 	}else{
