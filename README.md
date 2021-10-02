@@ -64,4 +64,5 @@ int main(){
 - A class can receive an unlimited number of signals from an unlimited number of emitters.
 - Signals are passed by reference wich means that they can be modified on the fly if received as non const.
 - A signal emitted as const cannot be received as non const reference.
+- Signals can be template classes
 
