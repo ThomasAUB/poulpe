@@ -41,9 +41,13 @@ After the lines above, a type **Emitter** is declared, it is used to send the si
 template<typename emitter_t>
 struct MyEmitter{
     void test(){
+    
         // instantiation of the signal
         MySignal s;
-        // signal send
+        
+        // signal send : 
+        // the line below will call every receivers that implement 
+        // the function "void pReceive(MySignal)"
         emitter_t::pEmit(s);
     }
 };
@@ -60,4 +64,5 @@ int main(){
 - A class can receive an unlimited number of signals from an unlimited number of emitters.
 - Signals are passed by reference wich means that they can be modified on the fly if received as non const.
 - A signal emitted as const cannot be received as non const reference.
+- Signals can be template classes
 
