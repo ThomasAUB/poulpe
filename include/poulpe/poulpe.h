@@ -20,6 +20,9 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,   *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE   *
  * SOFTWARE.                                                                       *
+ *                                                                                 *
+ * github : https://github.com/ThomasAUB/poulpe                                    *
+ *                                                                                 *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #pragma once
@@ -44,8 +47,8 @@ struct Emitter {                                                                
 
 //! pass the instances of the receivers
 #define CREATE_POULPE(...)                                                          \
-Emitter::poulpe_t	gPoulpe(__VA_ARGS__);                                           \
-Emitter::poulpe_t&	Emitter::sP = gPoulpe;                                          \
+Emitter::poulpe_t gPoulpe(__VA_ARGS__);                                             \
+Emitter::poulpe_t& Emitter::sP = gPoulpe;                                           \
 
 
 
