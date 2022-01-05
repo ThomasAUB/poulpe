@@ -48,14 +48,10 @@ After the lines above, a type **Emitter** is declared, it is used to send the si
 template<typename emitter_t>
 struct MyEmitter{
     void test(){
-    
-        // instantiation of the signal
-        MySignal s;
-        
         // signal send : 
         // the line below will call every receivers that implement 
         // the function "void pReceive(MySignal)"
-        emitter_t::pEmit(s);
+        emitter_t::pEmit(MySignal());
     }
 };
 
@@ -117,24 +113,16 @@ CREATE_POULPE(sRXA, sRXB)
 template<typename emitter_t>
 struct MyEmitter{
 
-    void testA(){
-    
-        // instantiation of the signals
-        MySignalA sA;
-        
+    void testA(){        
         // the line below will call every receivers that implement 
         // the function "void pReceive(MySignalA)"
-        emitter_t::pEmit(sA);
+        emitter_t::pEmit(MySignalA());
     }
 
     void testB(){
-    
-        // instantiation of the signals
-        MySignalB sB;
-        
         // the line below will call every receivers that implement 
         // the function "void pReceive(MySignalB)"
-        emitter_t::pEmit(sB);
+        emitter_t::pEmit(MySignalB());
     }
 };
 
@@ -182,16 +170,46 @@ struct MyReceiverB{
 Signals are passed by reference, which means that they can be modified on the fly by receivers.
 
 ```cpp
-struct GetValue{ int m; };
+struct GetValue{ bool m; };
 ```
 
 ```cpp
 struct MyReceiver{
-
   void pReceive(GetValue& s) {
-    s.m = mValue;
+    s.m = true;
   }
-
-  int mValue;
 };
+```
+
+```cpp
+template<typename emitter_t>
+struct MyEmitter{
+
+    void getValue(){        
+
+        // instantiation of the signal
+        GetValue gv;
+
+        // init the member
+        gv.m = false;
+
+        // emitt signal
+        emitter_t::pEmit(gv);
+
+        // gv.m is now true
+        if(!gv.m) {
+          // error
+        }
+
+    }
+};
+
+int main(){
+  // instantiation of the emitter
+  MyEmitter<Emitter> e;
+
+  e.getValue();
+
+  return 0;
+}
 ```
