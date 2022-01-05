@@ -40,7 +40,7 @@ struct Emitter {                                                                
     template<typename signal_t>                                                     \
     static void pEmit(signal_t&& s){ sP.pEmit(s); }                                 \
 private:                                                                            \
-    static poulpe_t& sP;                                                            \
+    static poulpe_t sP;                                                             \
 };                                                                                  \
 
 
@@ -48,8 +48,7 @@ private:                                                                        
 
 //! pass the instances of the receivers
 #define CREATE_POULPE(...)                                                          \
-Emitter::poulpe_t gPoulpe(__VA_ARGS__);                                             \
-Emitter::poulpe_t& Emitter::sP = gPoulpe;                                           \
+Emitter::poulpe_t Emitter::sP(__VA_ARGS__);                                         \
 
 
 
