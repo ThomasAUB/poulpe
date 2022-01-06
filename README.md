@@ -10,6 +10,14 @@
 
   It allows to send and receive data and events (called signals) from one class to others without other coupling than the signal type.
 
+- A class can be an emitter and a receiver at the same time.
+- A class can emit an unlimited number of signals to an unlimited number of receivers.
+- A class can receive an unlimited number of signals from an unlimited number of emitters.
+- Signals are passed by reference wich means that they can be modified on the fly if received as non const.
+- A signal emitted as const cannot be received as non const reference.
+- Signals can be template classes
+
+
 ## How-To
 
   In order to make a class able to receive a signal of type **MySignal**, it has to implement the function ***void pReceive(MySignal);***
@@ -62,12 +70,6 @@ int main(){
   return 0;
 }
 ```
-- A class can be an emitter and a receiver at the same time.
-- A class can emit an unlimited number of signals to an unlimited number of receivers.
-- A class can receive an unlimited number of signals from an unlimited number of emitters.
-- Signals are passed by reference wich means that they can be modified on the fly if received as non const.
-- A signal emitted as const cannot be received as non const reference.
-- Signals can be template classes
 
 
 ## Multiple signals
@@ -147,22 +149,21 @@ struct MySignal{};
 ```
 
 ```cpp
-
 struct MyReceiverA{
   // this function will be called for every MySignal<5> sent
   void pReceive(MySignal<5> s);
 };
 
 struct MyReceiverB{
-
   // this function will be called for every MySignal<I> sent
   template<int I>
   void pReceive(MySignal<I> s);
+};
 
+struct MyReceiverC{
   // this function will be called for any type sent
   template<typename signal_t>
   void pReceive(signal_t s);
-
 };
 ```
 
@@ -212,4 +213,37 @@ int main(){
 
   return 0;
 }
+```
+
+## Emitter/Receiver
+A class can be an emitter and a receiver at the same time
+
+```cpp
+struct MySignalA{};
+
+struct MySignalB{};
+```
+
+
+```cpp
+template<typename emitter_t>
+struct MyRxTx{
+
+  void test(){
+    emitter_t::pEmit(MySignalA());
+  }
+
+  void pReceive(MySignalB s){
+    // do stuff
+  }
+
+};
+```
+
+```cpp
+DEFINE_RECEIVERS(MyRxTx<Emitter>)
+
+MyRxTx<Emitter> sRX;
+
+CREATE_POULPE(sRX)
 ```
