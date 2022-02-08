@@ -4,8 +4,6 @@
 #include <cppunit/TestCase.h>
 #include <cppunit/TestFixture.h>
 
-#include "poulpe_instance.h"
-
 class CounterTest : public CppUnit::TestFixture { 
     
     CPPUNIT_TEST_SUITE(PingTest);
