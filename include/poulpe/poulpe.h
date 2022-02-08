@@ -29,7 +29,7 @@
 
 #include <tuple>
 #include <type_traits>
-    
+
 
 
 
@@ -37,8 +37,17 @@
 #define DEFINE_RECEIVERS(...)                                                       \
 struct Emitter {                                                                    \
     using poulpe_t = Poulpe<__VA_ARGS__>;                                           \
+    																				\
+	/* sends the signal to every receivers that implement the right function */		\
     template<typename signal_t>                                                     \
     static void pEmit(signal_t&& s){ sP.pEmit(s); }                                 \
+																					\
+	/* returns the number of receivers that implement the right function */			\
+	template<typename signal_t>														\
+	static constexpr std::size_t getReceiverCount() { 								\
+		return poulpe_t::getReceiverCount<signal_t>(); 								\
+	}																				\
+																					\
 private:                                                                            \
     static poulpe_t sP;                                                             \
 };                                                                                  \
@@ -73,7 +82,28 @@ struct Poulpe {
         process_call(s, std::make_index_sequence<sizeof...(T)>{});
     }
 
+    template<typename signal_t>
+    static constexpr std::size_t getReceiverCount() {
+    	std::size_t ioCount = 0;
+    	countReceivers<signal_t>(ioCount);
+    	return ioCount;
+    }
+
 private:
+
+    template<typename signal_t, std::size_t I = 0>
+    static constexpr void countReceivers(std::size_t& ioCount) {
+
+    	if constexpr (
+    			IsReceiver<type_at<(I%sizeof...(T))>, void(signal_t&)>::value
+		) {
+    		ioCount++;
+    	}
+
+    	if constexpr (I < sizeof...(T) - 1) {
+    		countReceivers<signal_t, I + 1>(ioCount);
+    	}
+    }
 
     template<size_t I>
     using type_at = typename std::tuple_element<I, std::tuple<T...>>::type;
