@@ -17,6 +17,8 @@
 #include "ping_test.h"
 CPPUNIT_TEST_SUITE_REGISTRATION( PingTest );
 
+#include "counter_test.h"
+CPPUNIT_TEST_SUITE_REGISTRATION( CounterTest );
 
 
 int main(){
