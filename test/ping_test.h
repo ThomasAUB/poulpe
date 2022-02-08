@@ -18,6 +18,8 @@ class PingTest : public CppUnit::TestFixture {
 
         void tearDown(){}
 
+    protected: 
+
         void run(){
             TX<Emitter> tx;
         }
