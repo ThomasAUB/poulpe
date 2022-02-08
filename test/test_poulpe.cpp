@@ -18,7 +18,6 @@
 CPPUNIT_TEST_SUITE_REGISTRATION( PingTest );
 
 
-
 int main(){
     // informs test-listener about testresults
     CPPUNIT_NS::TestResult testresult;
