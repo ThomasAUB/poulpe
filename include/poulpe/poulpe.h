@@ -47,7 +47,7 @@ struct Emitter {                                                                
     static constexpr std::size_t getReceiverCount() {                               \
         return poulpe_t::getReceiverCount<signal_t>();                              \
     }                                                                               \
-	                                                                                \
+                                                                                    \
 private:                                                                            \
     static poulpe_t sP;                                                             \
 };                                                                                  \
