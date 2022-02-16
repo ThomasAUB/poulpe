@@ -38,15 +38,15 @@
 struct Emitter {                                                                    \
     using poulpe_t = Poulpe<__VA_ARGS__>;                                           \
                                                                                     \
-	/* sends the signal to every receivers that implement the right function */     \
+    /* sends the signal to every receivers that implement the right function */     \
     template<typename signal_t>                                                     \
     static void pEmit(signal_t&& s){ sP.pEmit(s); }                                 \
                                                                                     \
-	/* returns the number of receivers that implement the right function */         \
-	template<typename signal_t>                                                     \
-	static constexpr std::size_t getReceiverCount() {                               \
-		return poulpe_t::getReceiverCount<signal_t>();                              \
-	}                                                                               \
+    /* returns the number of receivers that implement the right function */         \
+    template<typename signal_t>                                                     \
+    static constexpr std::size_t getReceiverCount() {                               \
+        return poulpe_t::getReceiverCount<signal_t>();                              \
+    }                                                                               \
 	                                                                                \
 private:                                                                            \
     static poulpe_t sP;                                                             \
