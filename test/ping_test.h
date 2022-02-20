@@ -21,7 +21,7 @@ class PingTest : public CppUnit::TestFixture {
     protected: 
 
         void run(){
-            TX<Emitter> tx;
+            TX<poulpe::Emitter> tx;
         }
         
 

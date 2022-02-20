@@ -70,7 +70,9 @@ poulpe::Emitter::poulpe_t poulpe::Emitter::sP(__VA_ARGS__);                     
 
 namespace poulpe {
 
-    namespace details {
+    namespace utils {
+
+        // compile-time utils
 
         template<typename ... T>
         struct unique_types;
@@ -107,7 +109,7 @@ namespace poulpe {
         //! We could leave it undefined if we didn't care.
 
         template<typename, typename R>
-        struct IsReceiver {
+        struct is_receiver {
             static_assert(
                 std::integral_constant<R, false>::value,
                 "Second template parameter needs to be of function type.");
@@ -115,15 +117,17 @@ namespace poulpe {
 
         //! specialization that does the checking
         template<typename C, typename Ret, typename... Args>
-        struct IsReceiver<C, Ret(Args...)> {
+        struct is_receiver<C, Ret(Args...)> {
         private:
             template<typename R>
             static constexpr auto check(R*)
             -> typename
                 std::is_same<
-                    decltype( std::declval<R>().pReceive( std::declval<Args>()... ) ),
-                    Ret    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                >::type;  // attempt to call it and see if the return type is correct
+                    decltype(
+                            std::declval<R>().pReceive( std::declval<Args>()... )
+                            ),
+                    Ret
+                >::type;  // attempt to call pReceive and check the result
 
             template<typename>
             static constexpr std::false_type check(...);
@@ -143,7 +147,7 @@ namespace poulpe {
     template<typename... T>
     struct Poulpe {
 
-        static_assert(details::unique_types<T...>::value == true, "Types must be unique");
+        static_assert(utils::unique_types<T...>::value == true, "Types must be unique");
 
         constexpr Poulpe(T&...p) :
         mReceivers(std::tuple<T&...>(p...)) {}
@@ -156,7 +160,7 @@ namespace poulpe {
 
             (
                 (
-                    (details::IsReceiver<T, void(signal_t&)>::value) ?
+                    (utils::is_receiver<T, void(signal_t&)>::value) ?
                             std::get<T>(mReceivers).pReceive(s) : //
                             0
                  ),
@@ -165,7 +169,7 @@ namespace poulpe {
 
         template<typename signal_t>
         static constexpr std::size_t getReceiverCount() {
-            return (((details::IsReceiver<T, void(signal_t&)>::value) ? 1 : 0) + ...);
+            return (((utils::is_receiver<T, void(signal_t&)>::value) ? 1 : 0) + ...);
         }
 
     private:
