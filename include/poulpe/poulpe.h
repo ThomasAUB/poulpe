@@ -33,31 +33,33 @@
 
 
 
+
 //! pass the typenames of receivers
 #define DEFINE_RECEIVERS(...)                                                       \
-struct Emitter {                                                                    \
-    using poulpe_t = Poulpe<__VA_ARGS__>;                                           \
+namespace poulpe {                                                                  \
+    struct Emitter {                                                                \
+        using poulpe_t = poulpe::Poulpe<__VA_ARGS__>;                               \
                                                                                     \
-    /* sends the signal to every receivers that implement the right function */     \
-    template<typename signal_t>                                                     \
-    static void pEmit(signal_t&& s){ sP.pEmit(s); }                                 \
+        /* sends the signal to every receivers that implement the right function */ \
+        template<typename signal_t>                                                 \
+        static void pEmit(signal_t&& s){ sP.pEmit(s); }                             \
                                                                                     \
-    /* returns the number of receivers that implement the right function */         \
-    template<typename signal_t>                                                     \
-    static constexpr std::size_t getReceiverCount() {                               \
-        return poulpe_t::getReceiverCount<signal_t>();                              \
-    }                                                                               \
+        /* returns the number of receivers that implement the right function */     \
+        template<typename signal_t>                                                 \
+        static constexpr std::size_t getReceiverCount() {                           \
+            return poulpe_t::getReceiverCount<signal_t>();                          \
+        }                                                                           \
                                                                                     \
-private:                                                                            \
-    static poulpe_t sP;                                                             \
-};                                                                                  \
-
+    private:                                                                        \
+        static poulpe_t sP;                                                         \
+    };                                                                              \
+}                                                                                   \
 
 
 
 //! pass the instances of the receivers
 #define CREATE_POULPE(...)                                                          \
-Emitter::poulpe_t Emitter::sP(__VA_ARGS__);                                         \
+poulpe::Emitter::poulpe_t poulpe::Emitter::sP(__VA_ARGS__);                         \
 
 
 
@@ -66,107 +68,109 @@ Emitter::poulpe_t Emitter::sP(__VA_ARGS__);                                     
 
 
 
+namespace poulpe {
 
+    namespace details {
 
-template<typename... T>
-struct Poulpe {
+        template<typename ... T>
+        struct unique_types;
 
-    constexpr Poulpe(T&...p) :
-    mReceivers(std::tuple<T&...>(p...)) {}
+        template<typename T>
+        struct unique_types<T> {
+            static constexpr bool value = true;
+        };
 
-    template<typename signal_t>
-    void pEmit(signal_t &s) {
+        template<typename T1, typename T2>
+        struct unique_types<T1, T2> {
+            static constexpr bool value = !std::is_same<T1, T2>::value;
+        };
 
-        static_assert(!std::is_fundamental<signal_t>::value,
-                "Invalid signal type : can't be fundamental type");
-        process_call(s, std::make_index_sequence<sizeof...(T)>{});
-    }
+        template<typename T1, typename T2, typename ... TRest>
+        struct unique_types<T1, T2, TRest...> {
+            static constexpr bool value =
+                unique_types<T1, T2>::value         &&
+                unique_types<T1, TRest...>::value   &&
+                unique_types<T2, TRest...>::value;
+        };
 
-    template<typename signal_t>
-    static constexpr std::size_t getReceiverCount() {
-    	std::size_t ioCount = 0;
-    	countReceivers<signal_t>(ioCount);
-    	return ioCount;
-    }
-
-private:
-
-    template<typename signal_t, std::size_t I = 0>
-    static constexpr void countReceivers(std::size_t& ioCount) {
-
-    	if constexpr (
-    			IsReceiver<type_at<(I%sizeof...(T))>, void(signal_t&)>::value
-		) {
-    		ioCount++;
-    	}
-
-    	if constexpr (I < sizeof...(T) - 1) {
-    		countReceivers<signal_t, I + 1>(ioCount);
-    	}
-    }
-
-    template<size_t I>
-    using type_at = typename std::tuple_element<I, std::tuple<T...>>::type;
-
-    const std::tuple<T&...> mReceivers;
-
-    // === receiver sensor === //
-
-    //! Primary template with a static assertion
-    //! for a meaningful error message
-    //! if it ever gets instantiated.
-    //! We could leave it undefined if we didn't care.
-    template<typename, typename R>
-    struct IsReceiver {
         static_assert(
-            std::integral_constant<R, false>::value,
-            "Second template parameter needs to be of function type.");
-    };
+                unique_types<char, int, float, double>::value,
+                "Error : types are not unique");
 
-    //! specialization that does the checking
-    template<typename C, typename Ret, typename... Args>
-    struct IsReceiver<C, Ret(Args...)> {
+        ///////////////////////////////////////////////////////////////////
+
+        // === receiver sensor === //
+
+        //! Primary template with a static assertion
+        //! for a meaningful error message
+        //! if it ever gets instantiated.
+        //! We could leave it undefined if we didn't care.
+
+        template<typename, typename R>
+        struct IsReceiver {
+            static_assert(
+                std::integral_constant<R, false>::value,
+                "Second template parameter needs to be of function type.");
+        };
+
+        //! specialization that does the checking
+        template<typename C, typename Ret, typename... Args>
+        struct IsReceiver<C, Ret(Args...)> {
+        private:
+            template<typename R>
+            static constexpr auto check(R*)
+            -> typename
+                std::is_same<
+                    decltype( std::declval<R>().pReceive( std::declval<Args>()... ) ),
+                    Ret    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                >::type;  // attempt to call it and see if the return type is correct
+
+            template<typename>
+            static constexpr std::false_type check(...);
+
+            typedef decltype(check<C>(0)) type;
+
+        public:
+            static constexpr bool value = type::value;
+        };
+
+        // ======================= //
+
+    }
+
+
+
+    template<typename... T>
+    struct Poulpe {
+
+        static_assert(details::unique_types<T...>::value == true, "Types must be unique");
+
+        constexpr Poulpe(T&...p) :
+        mReceivers(std::tuple<T&...>(p...)) {}
+
+        template<typename signal_t>
+        void pEmit(signal_t &s) {
+
+            static_assert(!std::is_fundamental<signal_t>::value,
+                    "Invalid signal type : can't be fundamental type");
+
+            (
+                (
+                    (details::IsReceiver<T, void(signal_t&)>::value) ?
+                            std::get<T>(mReceivers).pReceive(s) : //
+                            0
+                 ),
+            ...);
+        }
+
+        template<typename signal_t>
+        static constexpr std::size_t getReceiverCount() {
+            return (((details::IsReceiver<T, void(signal_t&)>::value) ? 1 : 0) + ...);
+        }
+
     private:
-        template<typename R>
-        static constexpr auto check(R*)
-        -> typename
-            std::is_same<
-                decltype( std::declval<R>().pReceive( std::declval<Args>()... ) ),
-                Ret    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-            >::type;  // attempt to call it and see if the return type is correct
 
-        template<typename>
-        static constexpr std::false_type check(...);
+        const std::tuple<T&...> mReceivers;
 
-        typedef decltype(check<C>(0)) type;
-
-    public:
-        static constexpr bool value = type::value;
     };
-
-    // ======================= //
-
-    //! call receiver I
-    template<std::size_t I, typename signal_t>
-    inline typename std::enable_if<
-    IsReceiver<type_at<(I%sizeof...(T))>, void(signal_t&)>::value,
-    void>::type
-    call_receiver(signal_t &s) {
-        std::get<I>(mReceivers).pReceive(s);
-    }
-
-    //! empty receiver : do nothing
-    template<std::size_t I, typename signal_t>
-    inline typename std::enable_if<
-    !IsReceiver<type_at<(I%sizeof...(T))>, void(signal_t&)>::value,
-    void>::type
-    call_receiver(signal_t &s) {}
-
-    //! call every receivers
-    template<typename signal_t, std::size_t... Is>
-    inline void process_call(signal_t &s, std::index_sequence<Is...>) {
-        (call_receiver<Is>(s), ...);
-    }
-
-
-};
+}
