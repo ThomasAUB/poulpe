@@ -70,9 +70,9 @@ poulpe::Emitter::poulpe_t poulpe::Emitter::sP(__VA_ARGS__);                     
 
 namespace poulpe {
 
-    namespace utils {
+    namespace utils { // compile-time utils
 
-        // compile-time utils
+
 
         template<typename ... T>
         struct unique_types;
@@ -153,18 +153,12 @@ namespace poulpe {
         mReceivers(std::tuple<T&...>(p...)) {}
 
         template<typename signal_t>
-        void pEmit(signal_t &s) {
+        constexpr void pEmit(signal_t &s) {
 
             static_assert(!std::is_fundamental<signal_t>::value,
                     "Invalid signal type : can't be fundamental type");
 
-            (
-                (
-                    (utils::is_receiver<T, void(signal_t&)>::value) ?
-                            std::get<T>(mReceivers).pReceive(s) : //
-                            0
-                 ),
-            ...);
+            (call<T>(s), ...);
         }
 
         template<typename signal_t>
@@ -173,6 +167,16 @@ namespace poulpe {
         }
 
     private:
+
+        template<typename rx_t, typename signal_t>
+        typename std::enable_if<!utils::is_receiver<rx_t, void(signal_t&)>::value, void>::type
+        call(signal_t& s) {}
+
+        template<typename rx_t, typename signal_t>
+        typename std::enable_if<utils::is_receiver<rx_t, void(signal_t&)>::value, void>::type
+        call(signal_t& s) {
+            std::get<rx_t&>(mReceivers).pReceive(s);
+        }
 
         const std::tuple<T&...> mReceivers;
 
