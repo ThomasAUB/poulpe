@@ -22,22 +22,46 @@
 
   In order to make a class able to receive a signal of type **MySignal**, it has to implement the function ***void pReceive(MySignal);***
 
+  Signal definition
 
 ```cpp
+/// my_signal.h ///
 // Example of an empty signal definition
 struct MySignal{};
 ```
 
-
+  Receiver definition
+  
 ```cpp
+/// my_receiver.h ///
+#include "my_signal.h"
 struct MyReceiver{
     void pReceive(MySignal s);
+};
+```
+
+  The classes reponsible for emitting signals must take a typename **emitter** in template parameter
+
+```cpp
+/// my_emitter.h ///
+#include "my_signal.h"
+template<typename emitter_t>
+struct MyEmitter{
+    void test(){
+        // signal send : 
+        // the line below will call every receivers that implement 
+        // the function "void pReceive(MySignal)"
+        emitter_t::pEmit(MySignal());
+    }
 };
 ```
 
   Then add the receiver to the Poulpe declaration :
 
 ```cpp
+/// main.cpp ///
+#include "poulpe.h"
+#include "my_receiver.h"
 // list of receiver's types,
 // there is no limitation on the number of receivers
 DEFINE_RECEIVERS(MyReceiver)
@@ -53,22 +77,15 @@ CREATE_POULPE(sRX)
 After the lines above, a type **Emitter** is declared, it is used to send the signals from emitters to receivers.
 
 ```cpp
-template<typename emitter_t>
-struct MyEmitter{
-    void test(){
-        // signal send : 
-        // the line below will call every receivers that implement 
-        // the function "void pReceive(MySignal)"
-        emitter_t::pEmit(MySignal());
-    }
-};
+/// main.cpp ///
 
 int main(){
   // instantiation of the emitter
-  MyEmitter<Emitter> e;
+  MyEmitter<poulpe::Emitter> e;
   e.test();
   return 0;
 }
+
 ```
 
 
@@ -130,7 +147,7 @@ struct MyEmitter{
 
 int main(){
   // instantiation of the emitter
-  MyEmitter<Emitter> e;
+  MyEmitter<poulpe::Emitter> e;
 
   e.testA();
 
@@ -207,7 +224,7 @@ struct MyEmitter{
 
 int main(){
   // instantiation of the emitter
-  MyEmitter<Emitter> e;
+  MyEmitter<poulpe::Emitter> e;
 
   e.getValue();
 
@@ -241,9 +258,9 @@ struct MyRxTx{
 ```
 
 ```cpp
-DEFINE_RECEIVERS(MyRxTx<Emitter>)
+DEFINE_RECEIVERS(MyRxTx<poulpe::Emitter>)
 
-MyRxTx<Emitter> sRX;
+MyRxTx<poulpe::Emitter> sRX;
 
 CREATE_POULPE(sRX)
 ```
