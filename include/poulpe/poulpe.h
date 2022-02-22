@@ -147,11 +147,14 @@ namespace poulpe {
     template<typename... T>
     struct Poulpe {
 
-        static_assert(poulpe::utils::unique_types<T...>::value == true, "Types must be unique");
+        static_assert(
+            poulpe::utils::unique_types<T...>::value == true, 
+            "Types must be unique");
 
         constexpr Poulpe(T&...p) :
         mReceivers(std::tuple<T&...>(p...)) {}
 
+        // dispatch signal_t to receivers
         template<typename signal_t>
         constexpr void pEmit(signal_t &s) {
 
@@ -161,22 +164,37 @@ namespace poulpe {
             (call<T>(s), ...);
         }
 
+        // returns the number of receiever for signal_t
         template<typename signal_t>
         static constexpr std::size_t getReceiverCount() {
-            return (((poulpe::utils::is_receiver<T, void(signal_t&)>::value) ? 1 : 0) + ...);
+            return (
+                    (
+                        (poulpe::utils::is_receiver<T, void(signal_t&)>::value) ? 
+                        1 : 
+                        0
+                    ) + ...
+                );
         }
 
     private:
 
+        // rx_t is not a signal_t receiver : do nothing
         template<typename rx_t, typename signal_t>
-        typename std::enable_if<!poulpe::utils::is_receiver<rx_t, void(signal_t&)>::value, void>::type
+        typename std::enable_if<
+        !poulpe::utils::is_receiver<rx_t, void(signal_t&)>::value, 
+        void>::type
         call(signal_t& s) {}
 
+
+        // rx_t is a signal_t receiver : call pReceive
         template<typename rx_t, typename signal_t>
-        typename std::enable_if<poulpe::utils::is_receiver<rx_t, void(signal_t&)>::value, void>::type
+        typename std::enable_if<
+        poulpe::utils::is_receiver<rx_t, void(signal_t&)>::value, 
+        void>::type
         call(signal_t& s) {
             std::get<rx_t&>(mReceivers).pReceive(s);
         }
+
 
         const std::tuple<T&...> mReceivers;
 
