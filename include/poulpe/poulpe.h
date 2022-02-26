@@ -108,7 +108,8 @@ namespace poulpe {
     struct Poulpe {
 
         constexpr Poulpe(T&...p) :
-        mReceivers(std::tuple<T&...>(p...)) {}
+        mReceivers(std::tuple<T&...>(p...))
+        {}
 
         // dispatch signal_t to receivers
         template<typename signal_t>
@@ -117,40 +118,46 @@ namespace poulpe {
             static_assert(!std::is_fundamental<signal_t>::value,
                     "Invalid signal type : can't be fundamental type");
 
-            (call<T>(s), ...);
+            if constexpr (getReceiverCount<signal_t>() > 0) {
+                unfoldCall(s, std::make_index_sequence<sizeof...(T)>{});
+            }
+
         }
 
         // returns the number of receiever for signal_t
         template<typename signal_t>
         static constexpr std::size_t getReceiverCount() {
-            return  (
-                    (
-                        ( poulpe::utils::is_receiver<T, signal_t>::value ) ?
-                        1 :
-                        0
-                    ) + ...
-                    );
+            return
+
+            (
+                (
+                    ( poulpe::utils::is_receiver<T, signal_t>::value ) ?
+                    1 :
+                    0
+                ) + ...
+            );
+
         }
 
     private:
 
-        // rx_t is not a signal_t receiver : do nothing
-        template<typename rx_t, typename signal_t>
-        typename std::enable_if<
-            !poulpe::utils::is_receiver<rx_t, signal_t>::value, void
-        >::type
-        call(signal_t& s) {}
+        // call pReceive function if rx_t implements
+        // the pReceive function able to receive the type signal_t
+        template<std::size_t I, typename signal_t>
+        void call(signal_t& s) {
 
+            using rx_t = typename std::tuple_element<I, std::tuple<T...>>::type;
 
-        // rx_t is a signal_t receiver : call pReceive
-        template<typename rx_t, typename signal_t>
-        typename std::enable_if<
-            poulpe::utils::is_receiver<rx_t, signal_t>::value, void
-        >::type
-        call(signal_t& s) {
-            std::get<rx_t&>(mReceivers).pReceive(s);
+            if constexpr (poulpe::utils::is_receiver<rx_t, signal_t>::value) {
+                std::get<I>(mReceivers).pReceive(s);
+            }
+
         }
 
+        template<std::size_t... Is, typename signal_t>
+        void unfoldCall(signal_t& s, const std::index_sequence<Is...>&) {
+            (call<Is>(s), ...);
+        }
 
         const std::tuple<T&...> mReceivers;
 
