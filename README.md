@@ -6,7 +6,7 @@
   <img width="64" height="64" src="icon.png">
 </p>
 
-  Poulpe is a lightweight compile-time observer design pattern (c++17 or above).
+  Poulpe is a header-only lightweight compile-time observer design pattern (c++17 or above).
 
   It allows to send and receive data and events (called signals) from one class to others without other coupling than the signal type.
 
