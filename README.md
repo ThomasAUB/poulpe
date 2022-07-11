@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/ThomasAUB/Poulpe.svg?branch=master)](https://travis-ci.com/ThomasAUB/Poulpe)
+[![License](https://img.shields.io/github/license/ThomasAUB/poulpe.svg)](LICENSE)
 
 # Poulpe
 
