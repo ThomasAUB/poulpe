@@ -47,18 +47,17 @@ CREATE_POULPE(rx)
 int main() {
 
     // instantiate ping state
-	bool ping = false;
+    bool ping = false;
 
     // instantiate ping emitter
-	PingEmitter<Emitter> tx(ping);
+    PingEmitter<Emitter> tx(ping);
 
     // test updated ping state
-	if(ping){
-		std::cout << "Ping OK" << std::endl;
-	}else{
-		std::cout << "Ping NOT OK !" << std::endl;
-	}
+    if(ping){
+        std::cout << "Ping OK" << std::endl;
+    }else{
+        std::cout << "Ping NOT OK !" << std::endl;
+    }
 
-
-	return 0;
+    return 0;
 }
