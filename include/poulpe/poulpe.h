@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include <cstddef>
 #include <tuple>
 #include <type_traits>
 
@@ -136,6 +137,8 @@ namespace poulpe {
                     0
                 ) + ...
             );
+
+            return 0; // suppress warning
 
         }
 
